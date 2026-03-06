@@ -1,1 +1,0 @@
-{"mapName":"Test map","savedChunkList":[{"chunkKey":{"x":0,"y":0},"originPosition":{"x":0.0,"y":0.0,"z":0.0}},{"chunkKey":{"x":-1,"y":0},"originPosition":{"x":-16.0,"y":0.0,"z":0.0}},{"chunkKey":{"x":-1,"y":-1},"originPosition":{"x":-16.0,"y":0.0,"z":-16.0}},{"chunkKey":{"x":0,"y":-1},"originPosition":{"x":0.0,"y":0.0,"z":-16.0}}],"savedItemList":[]}

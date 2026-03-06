@@ -1,5 +1,5 @@
-# Set the default behavior, in case people don't have core.autocrlf set.
-* text=auto
+# Normalize EOL for all files that Git considers text files.
+* text=auto eol=lf
 
 # Explicitly declare text files you want to always be normalized and converted
 # to native line endings on checkout.
@@ -8,7 +8,7 @@
 *.meta text
 *.asset text
 *.unity text
-*.physicMaterial .text
+*.physicMaterial text
 *.mat text
 *.mixer text
 *.anim text
@@ -27,4 +27,4 @@
 *.shader binary
 *.ttf binary
 *.otf binary
-*tss binary
+*.tss binary
