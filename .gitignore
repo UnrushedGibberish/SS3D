@@ -109,3 +109,6 @@ Assets/Content/Addressables/link.xml.meta
 # Godot 4+ specific ignores
 .godot/
 /android/
+
+# Other
+.github/

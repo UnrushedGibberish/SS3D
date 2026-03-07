@@ -11,7 +11,8 @@ config_version=5
 [application]
 
 config/name="SS3D"
-config/features=PackedStringArray("4.6", "Forward Plus")
+run/main_scene="uid://djir0dygt8qfp"
+config/features=PackedStringArray("4.6", "C#", "Forward Plus")
 config/icon="res://icon.svg"
 
 [dotnet]
