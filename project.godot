@@ -13,7 +13,10 @@ config_version=5
 config/name="SS3D"
 run/main_scene="uid://djir0dygt8qfp"
 config/features=PackedStringArray("4.6", "C#", "Forward Plus")
-config/icon="res://icon.svg"
+
+[autoload]
+
+NetworkManager="*res://game/NetworkManager.cs"
 
 [dotnet]
 
