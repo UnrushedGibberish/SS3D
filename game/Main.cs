@@ -11,6 +11,8 @@ public partial class Main : Node
 
 	[ExportGroup("Scene References")]
 	[Export] public PackedScene? MainMenuScene { get; set; }
+	[Export] public PackedScene? PlayerScene { get; set; }
+	[Export] public PackedScene? GameScene { get; set; }
 
 	private MainMenu? _mainMenu;
 
@@ -22,7 +24,7 @@ public partial class Main : Node
 			return;
 		}
 
-		if (MainMenuScene == null)
+		if (MainMenuScene == null || PlayerScene == null || GameScene == null)
 		{
 			GD.PrintErr("Scene references are missing");
 			return;
