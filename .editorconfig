@@ -25,3 +25,5 @@ dotnet_diagnostic.IDE0074.severity = none
 
 # IDE1006: Naming Styles
 dotnet_diagnostic.IDE1006.severity = warning
+
+dotnet_diagnostic.IDE0130.severity = none
