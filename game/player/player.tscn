@@ -6,8 +6,9 @@
 
 [sub_resource type="CapsuleShape3D" id="CapsuleShape3D_obar5"]
 
-[node name="Player" type="CharacterBody3D" unique_id=593353617]
+[node name="Player" type="CharacterBody3D" unique_id=593353617 node_paths=PackedStringArray("Camera")]
 script = ExtResource("1_obar5")
+Camera = NodePath("Camera3D")
 
 [node name="MeshInstance3D" type="MeshInstance3D" parent="." unique_id=936409501]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1, 0)
