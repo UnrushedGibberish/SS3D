@@ -15,6 +15,8 @@ public partial class Main : Node
 	[Export] public PackedScene? GameScene { get; set; }
 
 	private MainMenu? _mainMenu;
+	private Node3D? _gameWorld;
+	private Node? _player;
 
 	public override void _Ready()
 	{
@@ -29,10 +31,7 @@ public partial class Main : Node
 			GD.PrintErr("Scene references are missing");
 			return;
 		}
-
-		BuildMainMenu();
-
-		// Subscribe to network manager/autoload lifecycle
+		
 		if (NetworkManager.Instance != null)
 		{
 			NetworkManager.Instance.ConnectedToServerEvent += OnConnectedToServer;
@@ -40,6 +39,8 @@ public partial class Main : Node
 			NetworkManager.Instance.HostStartedEvent += OnHostStarted;
 			NetworkManager.Instance.ServerDisconnectedEvent += OnServerDisconnected;
 		}
+
+		LoadMainMenu();
 	}
 
 	public override void _ExitTree()
@@ -55,8 +56,8 @@ public partial class Main : Node
 
 	private void OnHostStarted()
 	{
-		_mainMenu?.SetStatus("Hosting: server started.");
-		//CleanupMainMenu();
+		UnloadMainMenu();
+		LoadGame();
 	}
 
 	private void OnConnectedToServer()
@@ -72,27 +73,44 @@ public partial class Main : Node
 
 	private void OnServerDisconnected()
 	{
+		UnloadGame();
+		UnloadMainMenu();
+		LoadMainMenu();
 		_mainMenu?.SetStatus("Server disconnected.");
-		//CleanupMainMenu();
-		//BuildMainMenu();
 	}
 
-	private void BuildMainMenu()
+	private void LoadMainMenu()
 	{
-		if (MainMenuScene == null || GUIRoot == null)
-		{
-			GD.PrintErr("Cannot build main menu: missing references.");
-			return;
-		}
-
 		var mainMenu = MainMenuScene.Instantiate();
 		GUIRoot.AddChild(mainMenu);
 		_mainMenu = mainMenu as MainMenu;
 	}
 
-	private void CleanupMainMenu()
+	private void UnloadMainMenu()
 	{
 		_mainMenu?.QueueFree();
 		_mainMenu = null;
+	}
+
+	private void LoadGame()
+	{
+		UnloadGame();
+
+		var gameWorld = GameScene.Instantiate<Node3D>();
+		WorldRoot.AddChild(gameWorld);
+		_gameWorld = gameWorld;
+
+		var player = PlayerScene.Instantiate<Player>();
+		WorldRoot.AddChild(player);
+		_player = player;
+	}
+
+	private void UnloadGame()
+	{
+		_gameWorld?.QueueFree();
+		_gameWorld = null;
+
+		_player?.QueueFree();
+		_player = null;
 	}
 }
