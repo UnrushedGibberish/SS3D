@@ -1,0 +1,29 @@
+[gd_scene format=3 uid="uid://b5437skcl3hb6"]
+
+[ext_resource type="Script" uid="uid://iyr4vpu2kme4" path="res://game/map/NetworkedCube.cs" id="1_4m1g1"]
+
+[sub_resource type="BoxMesh" id="BoxMesh_b21yq"]
+
+[sub_resource type="BoxShape3D" id="BoxShape3D_legpj"]
+
+[sub_resource type="SceneReplicationConfig" id="SceneReplicationConfig_4m1g1"]
+properties/0/path = NodePath(".:position")
+properties/0/spawn = true
+properties/0/replication_mode = 1
+properties/1/path = NodePath(".:rotation")
+properties/1/spawn = true
+properties/1/replication_mode = 1
+
+[node name="NetworkedCube" type="Node3D" unique_id=2072492038]
+script = ExtResource("1_4m1g1")
+
+[node name="MeshInstance3D" type="MeshInstance3D" parent="." unique_id=1396618002]
+mesh = SubResource("BoxMesh_b21yq")
+
+[node name="StaticBody3D" type="StaticBody3D" parent="." unique_id=126275218]
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="StaticBody3D" unique_id=477857251]
+shape = SubResource("BoxShape3D_legpj")
+
+[node name="MultiplayerSynchronizer" type="MultiplayerSynchronizer" parent="." unique_id=1249794765]
+replication_config = SubResource("SceneReplicationConfig_4m1g1")

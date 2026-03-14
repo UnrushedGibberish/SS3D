@@ -15,8 +15,8 @@ public partial class Main : Node
 	[Export] public PackedScene? GameScene { get; set; }
 
 	private MainMenu? _mainMenu;
-	private Node3D? _gameWorld;
-	private Node? _player;
+	private Map? _gameWorld;
+	private Player? _player;
 
 	public override void _Ready()
 	{
@@ -62,8 +62,8 @@ public partial class Main : Node
 
 	private void OnConnectedToServer()
 	{
-		_mainMenu?.SetStatus("Connected to server.");
-		//CleanupMainMenu();
+		UnloadMainMenu();
+		LoadGame();
 	}
 
 	private void OnConnectionFailed()
@@ -96,12 +96,13 @@ public partial class Main : Node
 	{
 		UnloadGame();
 
-		var gameWorld = GameScene.Instantiate<Node3D>();
+		var gameWorld = GameScene.Instantiate<Map>();
 		WorldRoot.AddChild(gameWorld);
 		_gameWorld = gameWorld;
 
 		var player = PlayerScene.Instantiate<Player>();
 		WorldRoot.AddChild(player);
+		player.GlobalPosition = _gameWorld.GetNextSpawnPosition();
 		_player = player;
 	}
 

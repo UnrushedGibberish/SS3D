@@ -1,11 +1,17 @@
 [gd_scene format=3 uid="uid://cohlsod0i8nbu"]
 
+[ext_resource type="Script" uid="uid://knb565s61su" path="res://game/map/Map.cs" id="1_u2t8j"]
+[ext_resource type="PackedScene" uid="uid://b5437skcl3hb6" path="res://game/map/networked_cube.tscn" id="2_v7c41"]
+
 [sub_resource type="PlaneMesh" id="PlaneMesh_hw08c"]
 size = Vector2(25, 25)
 
 [sub_resource type="WorldBoundaryShape3D" id="WorldBoundaryShape3D_u2t8j"]
 
-[node name="Map" type="Node3D" unique_id=1448807016]
+[node name="Map" type="Node3D" unique_id=1448807016 node_paths=PackedStringArray("PlayerSpawnPoints")]
+script = ExtResource("1_u2t8j")
+PlayerSpawnPoints = [NodePath("SpawnPoints/Node3D"), NodePath("SpawnPoints/Node3D2")]
+NetworkedCubeScene = ExtResource("2_v7c41")
 
 [node name="MeshInstance3D" type="MeshInstance3D" parent="." unique_id=1988209161]
 mesh = SubResource("PlaneMesh_hw08c")
@@ -14,3 +20,18 @@ mesh = SubResource("PlaneMesh_hw08c")
 
 [node name="CollisionShape3D" type="CollisionShape3D" parent="StaticBody3D" unique_id=256771998]
 shape = SubResource("WorldBoundaryShape3D_u2t8j")
+
+[node name="SpawnPoints" type="Node3D" parent="." unique_id=1619844608]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.5, 0)
+
+[node name="Node3D" type="Node3D" parent="SpawnPoints" unique_id=1517872460]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -8, 0, 0)
+
+[node name="Node3D2" type="Node3D" parent="SpawnPoints" unique_id=1877631565]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 8, 0, 0)
+
+[node name="MultiplayerSpawner" type="MultiplayerSpawner" parent="." unique_id=1325280860]
+spawn_path = NodePath("..")
+
+[node name="DirectionalLight3D" type="DirectionalLight3D" parent="." unique_id=1512866185]
+transform = Transform3D(0.8476502, 0.31954768, -0.42353097, 0, 0.7982783, 0.60228884, 0.53055555, -0.51053023, 0.6766607, 0, 0, 0)
