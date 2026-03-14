@@ -11,6 +11,7 @@ public partial class Player : CharacterBody3D
 	[Export] public float Speed { get; set; } = 5.0f;
 	[Export] public float JumpVelocity { get; set; } = 4.5f;
 	[Export] public float MouseSensitivity { get; set; } = 0.003f;
+	[Export] public bool RdpCompatibility { get; set; } = false;
 
 	private float _cameraPitch;
 
@@ -22,7 +23,7 @@ public partial class Player : CharacterBody3D
 			return;
 		}
 
-		Input.MouseMode = Input.MouseModeEnum.Captured;
+		Input.MouseMode = RdpCompatibility ? Input.MouseModeEnum.ConfinedHidden : Input.MouseModeEnum.Captured;
 		_cameraPitch = Camera.Rotation.X;
 	}
 
@@ -68,11 +69,14 @@ public partial class Player : CharacterBody3D
 	{
 		if (@event.IsActionPressed("toggle_mouse_capture"))
 		{
-			Input.MouseMode = Input.MouseMode == Input.MouseModeEnum.Captured ? Input.MouseModeEnum.Visible : Input.MouseModeEnum.Captured;
+			bool isLocked = Input.MouseMode is Input.MouseModeEnum.Captured or Input.MouseModeEnum.ConfinedHidden;
+			Input.MouseMode = isLocked
+				? Input.MouseModeEnum.Visible
+				: (RdpCompatibility ? Input.MouseModeEnum.ConfinedHidden : Input.MouseModeEnum.Captured);
 			GetViewport().SetInputAsHandled();
 		}
 
-		if (@event is not InputEventMouseMotion mouseMotion || Input.MouseMode != Input.MouseModeEnum.Captured)
+		if (@event is not InputEventMouseMotion mouseMotion || Input.MouseMode is not (Input.MouseModeEnum.Captured or Input.MouseModeEnum.ConfinedHidden))
 		{
 			return;
 		}
@@ -81,10 +85,12 @@ public partial class Player : CharacterBody3D
 		{
 			return;
 		}
+		
+		Vector2 delta = RdpCompatibility ? mouseMotion.ScreenRelative : mouseMotion.Relative;
 
-		RotateY(-mouseMotion.Relative.X * MouseSensitivity);
+		RotateY(-delta.X * MouseSensitivity);
 
-		_cameraPitch = Mathf.Clamp(_cameraPitch - mouseMotion.Relative.Y * MouseSensitivity, Mathf.DegToRad(-89f), Mathf.DegToRad(89f));
+		_cameraPitch = Mathf.Clamp(_cameraPitch - delta.Y * MouseSensitivity, Mathf.DegToRad(-89f), Mathf.DegToRad(89f));
 
 		Vector3 cameraRotation = Camera.Rotation;
 		cameraRotation.X = _cameraPitch;
