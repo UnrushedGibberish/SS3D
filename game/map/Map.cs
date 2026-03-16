@@ -5,42 +5,48 @@ namespace SS3D;
 
 public partial class Map : Node3D
 {
-	[ExportGroup("Spawn Points")]
-	[Export] public Node3D[] PlayerSpawnPoints { get; set; } = Array.Empty<Node3D>();
+	[ExportGroup("Node References")]
+	[Export] public MultiplayerSpawner? Spawner { get; set; }
 
 	[ExportGroup("Scene References")]
-	[Export] public PackedScene NetworkedCubeScene { get; set; }
-
-	private int _nextSpawnIndex = 0;
+	[Export] public PackedScene? NetworkedCubeScene { get; set; }
 
 	public override void _Ready()
 	{
+		if (Spawner == null)
+		{
+			GD.PrintErr("Node references are missing");
+			return;
+		}
+
 		if (NetworkedCubeScene == null)
 		{
 			GD.PrintErr("NetworkedCubeScene is not assigned in the Map.");
+			return;
 		}
+
+		Spawner.Spawned += OnSpawn;
 
 		if (Multiplayer.IsServer())
 		{
 			for (int i = 0; i < 5; i++)
 			{
-				var cubeInstance = NetworkedCubeScene.Instantiate<NetworkedCube>();
-				AddChild(cubeInstance);
-				cubeInstance.GlobalPosition = new Vector3(i * 2, 1, 0);
+				var cubeInstance = NetworkedCubeScene?.Instantiate<NetworkedCube>();
+				if (cubeInstance != null)
+				{
+					AddChild(node: cubeInstance, forceReadableName: true);
+					cubeInstance.GlobalPosition = new Vector3(i * 2, 1, 0);
+				}
+				else
+				{
+					GD.PrintErr("Failed to instantiate NetworkedCubeScene.");
+				}
 			}
 		}
 	}
 
-	public Vector3 GetNextSpawnPosition()
+	private void OnSpawn(Node node)
 	{
-		if (PlayerSpawnPoints.Length == 0)
-		{
-			GD.PrintErr("No player spawn points defined in the map.");
-			return Vector3.Zero;
-		}
-
-		var spawnPoint = PlayerSpawnPoints[_nextSpawnIndex];
-		_nextSpawnIndex = (_nextSpawnIndex + 1) % PlayerSpawnPoints.Length;
-		return spawnPoint.GlobalPosition;
+		GD.Print($"Node spawned: {node.Name}");
 	}
 }
