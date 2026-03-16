@@ -189,6 +189,8 @@ public partial class NetworkManager : Node
 		
 		var myName = $"Player_{LocalPeerId}"; 
 		Rpc(nameof(RegisterPlayerInfo), myName);
+
+		EmitSignal(SignalName.PlayerJoined, peerId);
 	}
 
 	private void OnPeerDisconnected(long peerId)
@@ -221,8 +223,6 @@ public partial class NetworkManager : Node
 		Players[peerId] = info;
 
 		GD.Print($"[{LocalPeerId}]: Player joined: {playerName}");
-		
-		EmitSignal(SignalName.PlayerJoined, playerName);
 	}
 
 	#endregion // Player Registration
