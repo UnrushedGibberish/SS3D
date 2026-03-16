@@ -2,7 +2,7 @@
 
 [ext_resource type="Script" uid="uid://do7cx3s3ol1d7" path="res://game/menus/MainMenu.cs" id="1_db0cf"]
 
-[node name="MainMenu" type="Control" unique_id=1314122098 node_paths=PackedStringArray("JoinButton", "HostButton", "QuitButton", "IPAddressInput", "StatusLabel")]
+[node name="MainMenu" type="Control" unique_id=1314122098 node_paths=PackedStringArray("JoinButton", "HostButton", "QuitButton", "IPAddressInput")]
 layout_mode = 3
 anchors_preset = 15
 anchor_right = 1.0
@@ -14,7 +14,6 @@ JoinButton = NodePath("CenterContainer/VBoxContainer/JoinButton")
 HostButton = NodePath("CenterContainer/VBoxContainer/HostButton")
 QuitButton = NodePath("CenterContainer/VBoxContainer/QuitButton")
 IPAddressInput = NodePath("CenterContainer/VBoxContainer/IPAddress")
-StatusLabel = NodePath("CenterContainer/VBoxContainer/StatusLabel")
 
 [node name="CenterContainer" type="CenterContainer" parent="." unique_id=1774114944]
 layout_mode = 1
@@ -35,15 +34,15 @@ text = "SS3D"
 horizontal_alignment = 1
 vertical_alignment = 1
 
-[node name="JoinButton" type="Button" parent="CenterContainer/VBoxContainer" unique_id=1341064940]
-custom_minimum_size = Vector2(256, 64)
-layout_mode = 2
-text = "Join"
-
 [node name="HostButton" type="Button" parent="CenterContainer/VBoxContainer" unique_id=1299059423]
 custom_minimum_size = Vector2(256, 64)
 layout_mode = 2
 text = "Host"
+
+[node name="JoinButton" type="Button" parent="CenterContainer/VBoxContainer" unique_id=1341064940]
+custom_minimum_size = Vector2(256, 64)
+layout_mode = 2
+text = "Join"
 
 [node name="QuitButton" type="Button" parent="CenterContainer/VBoxContainer" unique_id=1474628705]
 custom_minimum_size = Vector2(256, 64)
@@ -54,6 +53,3 @@ text = "Quit"
 layout_mode = 2
 text = "localhost"
 placeholder_text = "host address"
-
-[node name="StatusLabel" type="Label" parent="CenterContainer/VBoxContainer" unique_id=60580912]
-layout_mode = 2

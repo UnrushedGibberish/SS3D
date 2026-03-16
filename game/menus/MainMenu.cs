@@ -1,4 +1,5 @@
 using Godot;
+using SS3D.Networking;
 using System;
 
 namespace SS3D;
@@ -10,53 +11,64 @@ public partial class MainMenu : Control
 	[Export] public Button? HostButton { get; set; }
 	[Export] public Button? QuitButton { get; set; }
 	[Export] public LineEdit? IPAddressInput { get; set; }
-	[Export] public Label? StatusLabel { get; set; }
 
 	private const ushort DefaultPort = 7777;
 
 	public override void _Ready()
 	{
-		if (JoinButton == null || HostButton == null || QuitButton == null || IPAddressInput == null || StatusLabel == null)
+		if (JoinButton == null || HostButton == null || QuitButton == null || IPAddressInput == null)
 		{
 			GD.PrintErr("Node references are missing.");
 			return;
 		}
 
-		JoinButton.Pressed += OnJoinPressed;
 		HostButton.Pressed += OnHostPressed;
+		JoinButton.Pressed += OnJoinPressed;
 		QuitButton.Pressed += OnQuitPressed;
 	}
 
-	public void SetStatus(string text)
+	private void OnHostPressed()
 	{
-		if (StatusLabel == null)
+		if (NetworkManager.Instance == null)
 		{
-			GD.PrintErr("Status label not found.");
+			GD.PrintErr("Network manager not found.");
 			return;
 		}
-		
-		StatusLabel.Text = text;
+
+		if (NetworkManager.Instance.HasConnection)
+		{
+			GD.PrintErr("Already connected or hosting.");
+			return;
+		}
+
+		var err = NetworkManager.Instance.CreateHost(DefaultPort);
+		if (err != Error.Ok)
+		{
+			GD.PrintErr($"Host failed: {err}");
+			return;
+		}
+
+		GD.Print($"Hosting on port {DefaultPort}...");
 	}
 
 	private void OnJoinPressed()
 	{
 		if (NetworkManager.Instance == null)
 		{
-			SetStatus("Network manager not found.");
 			GD.PrintErr("Network manager not found.");
 			return;
 		}
 
-		if (NetworkManager.Instance.IsConnected)
+		if (NetworkManager.Instance.HasConnection)
 		{
-			SetStatus("Already connected.");
+			GD.PrintErr("Already connected.");
 			return;
 		}
 
 		var hostText = IPAddressInput?.Text?.Trim() ?? string.Empty;
 		if (string.IsNullOrEmpty(hostText))
 		{
-			SetStatus("Enter host address.");
+			GD.PrintErr("Enter host address.");
 			return;
 		}
 
@@ -66,44 +78,19 @@ public partial class MainMenu : Control
 		{
 			if (!System.Net.IPAddress.TryParse(hostText, out var _))
 			{
-				SetStatus("Invalid IP address.");
+				GD.PrintErr("Invalid IP address.");
 				return;
 			}
 		}
 
-		var err = NetworkManager.Instance.Join(hostText, DefaultPort);
+		var err = NetworkManager.Instance.CreateClient(hostText, DefaultPort);
 		if (err != Error.Ok)
 		{
-			SetStatus($"Join failed: {err}");
+			GD.PrintErr($"Join failed: {err}");
 			return;
 		}
 
-		SetStatus("Connecting...");
-	}
-
-	private void OnHostPressed()
-	{
-		if (NetworkManager.Instance == null)
-		{
-			SetStatus("Network manager not found.");
-			GD.PrintErr("Network manager not found.");
-			return;
-		}
-
-		if (NetworkManager.Instance.IsConnected)
-		{
-			SetStatus("Already connected or hosting.");
-			return;
-		}
-
-		var err = NetworkManager.Instance.Host(DefaultPort);
-		if (err != Error.Ok)
-		{
-			SetStatus($"Host failed: {err}");
-			return;
-		}
-
-		SetStatus($"Hosting on port {DefaultPort}...");
+		GD.Print("Connecting...");
 	}
 
 	private void OnQuitPressed()
