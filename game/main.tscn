@@ -5,14 +5,19 @@
 [ext_resource type="PackedScene" uid="uid://drga338dq0e7j" path="res://game/player/player.tscn" id="3_vop5m"]
 [ext_resource type="PackedScene" uid="uid://cohlsod0i8nbu" path="res://game/map/map.tscn" id="4_5un7r"]
 
-[node name="Main" type="Node" unique_id=1375030721 node_paths=PackedStringArray("WorldRoot", "GUIRoot")]
+[node name="Main" type="Node" unique_id=1375030721 node_paths=PackedStringArray("WorldRoot", "GUIRoot", "Spawner")]
 script = ExtResource("1_oa506")
 WorldRoot = NodePath("WorldRoot")
 GUIRoot = NodePath("GUIRoot")
+Spawner = NodePath("WorldRoot/MultiplayerSpawner")
 MainMenuScene = ExtResource("2_xtpaf")
 PlayerScene = ExtResource("3_vop5m")
 GameScene = ExtResource("4_5un7r")
 
 [node name="WorldRoot" type="Node3D" parent="." unique_id=746144575]
+
+[node name="MultiplayerSpawner" type="MultiplayerSpawner" parent="WorldRoot" unique_id=1968894657]
+_spawnable_scenes = PackedStringArray("uid://drga338dq0e7j")
+spawn_path = NodePath("..")
 
 [node name="GUIRoot" type="CanvasLayer" parent="." unique_id=1881419133]
