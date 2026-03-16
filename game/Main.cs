@@ -34,6 +34,8 @@ public partial class Main : Node
 		NetworkManager.Instance.ConnectedToServer += OnConnectedToServer;
 		NetworkManager.Instance.DisconnectedFromServer += OnDisconnectedFromServer;
 		NetworkManager.Instance.ConnectionFailed += OnConnectionFailed;
+		NetworkManager.Instance.PlayerJoined += OnPlayerJoined;
+		NetworkManager.Instance.PlayerLeft += OnPlayerLeft;
 
 		Spawner.Spawned += OnSpawn;
 
@@ -51,6 +53,8 @@ public partial class Main : Node
 		NetworkManager.Instance.ConnectedToServer -= OnConnectedToServer;
 		NetworkManager.Instance.DisconnectedFromServer -= OnDisconnectedFromServer;
 		NetworkManager.Instance.ConnectionFailed -= OnConnectionFailed;
+		NetworkManager.Instance.PlayerJoined -= OnPlayerJoined;
+		NetworkManager.Instance.PlayerLeft -= OnPlayerLeft;
 	}
 
 	private void OnHostStarted()
@@ -64,6 +68,7 @@ public partial class Main : Node
 		ClearGUI();
 		ClearWorld();
 		LoadGame();
+		SpawnPlayer(NetworkManager.Instance.LocalPeerId);
 	}
 
 	private void OnConnectedToServer()
@@ -76,6 +81,27 @@ public partial class Main : Node
 	private void OnConnectionFailed()
 	{
 		//_mainMenu?.SetStatus("Connection failed.");
+	}
+
+	private void OnPlayerJoined(long peerId)
+	{
+		if (!NetworkManager.Instance.IsServer)
+		{
+			return;
+		}
+
+		SpawnPlayer(peerId);
+	}
+
+	private void OnPlayerLeft(long peerId)
+	{
+		if (!NetworkManager.Instance.IsServer)
+		{
+			return;
+		}
+
+		var playerNode = WorldRoot?.GetNodeOrNull(peerId.ToString());
+		playerNode?.QueueFree();
 	}
 
 	private void OnDisconnectedFromServer()
@@ -109,19 +135,20 @@ public partial class Main : Node
 		else
 		{
 			GD.PrintErr("Failed to instantiate GameScene.");
-			return;
 		}
+	}
 
+	private void SpawnPlayer(long peerId)
+	{
 		var player = PlayerScene?.Instantiate<Player>();
 		if (player != null)
 		{
-			player.IsLocalPlayer = true;
+			player.Name = peerId.ToString();
 			WorldRoot?.AddChild(player);
 		}
 		else
 		{
 			GD.PrintErr("Failed to instantiate PlayerScene.");
-			return;
 		}
 	}
 
@@ -147,6 +174,10 @@ public partial class Main : Node
 
 		foreach (Node child in WorldRoot.GetChildren())
 		{
+			if (child is MultiplayerSpawner)
+			{
+				continue;
+			}
 			child.QueueFree();
 		}
 	}

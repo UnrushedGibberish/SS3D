@@ -13,11 +13,13 @@ public partial class Player : CharacterBody3D
 	[Export] public float JumpVelocity { get; set; } = 4.5f;
 	[Export] public float MouseSensitivity { get; set; } = 0.003f;
 	[Export] public bool RdpCompatibility { get; set; } = false;
-	[Export] public bool IsLocalPlayer { get; set; } = false;
+	public bool IsLocalPlayer { get; private set; }
 	private float _cameraPitch;
 
 	public override void _Ready()
 	{
+		IsLocalPlayer = Name == Multiplayer.GetUniqueId().ToString();
+
 		if (IsLocalPlayer)
 		{
 			if (Camera is null)
@@ -25,6 +27,7 @@ public partial class Player : CharacterBody3D
 				GD.PrintErr("Player is missing a Camera3D reference. Assign Camera in the inspector or add a direct child named Camera3D.");
 				return;
 			}
+
 			Camera.Current = true;
 
 			Input.MouseMode = RdpCompatibility ? Input.MouseModeEnum.ConfinedHidden : Input.MouseModeEnum.Captured;
